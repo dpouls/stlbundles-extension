@@ -1,32 +1,24 @@
 {
   "manifest_version": 2,
-  "name": "Patreon Downloader",
+  "name": "STLBundles Patreon Downloader",
   "version": "1.0.8",
   "description": "Download media and attachments from Patreon pages.",
   "page_action": {
-    "default_title": "Patreon Downloader",
+    "default_title": "STLBundles Patreon Downloader",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "/icons/icon-16x16.png",
-      "32": "/icons/icon-32x32.png",
-      "48": "/icons/icon-48x48.png",
-      "128": "/icons/icon-128x128.png"
+      "32": "/icons/icon-32x32.png"
     }
   },
   "icons": {
     "16": "/icons/icon-16x16.png",
-    "32": "/icons/icon-32x32.png",
-    "48": "/icons/icon-48x48.png",
-    "128": "/icons/icon-128x128.png"
+    "32": "/icons/icon-32x32.png"
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://www.patreon.com/posts/*"
-      ],
-      "js": [
-        "contentScript.js"
-      ]
+      "matches": ["https://www.patreon.com/posts/*"],
+      "js": ["js/jquery-3.6.0.min.js", "contentScript.js"]
     }
   ],
   "background": {

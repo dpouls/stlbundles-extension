@@ -2,6 +2,7 @@ const downloadLink = $('#download-link');
 const includeAvatar = $('#include_avatar');
 const includeDescription = $('#include_description');
 let files = [];
+let postData = {}
 
 includeAvatar.change(updateDownloadCount);
 includeDescription.change(updateDownloadCount);
@@ -40,15 +41,18 @@ function isPatreonPostSite() {
       if (url && url.indexOf('https://www.patreon.com/posts/') > -1) {
         $('#not-patreon-site').hide();
         $('#patreon-site').show();
-        parsePatreonData(tabId);
       } else {
         $('#not-patreon-site').show();
         $('#patreon-site').hide();
       }
+      parsePatreonData(tabId);
+      console.log(postData)
+      
     },
-  );
-}
-
+    );
+  }
+  $("loading").hide()
+isPatreonPostSite()
 function updateDownloadCount() {
   let count = files.length;
   if (includeAvatar.is(':checked')) {
@@ -74,12 +78,16 @@ function parsePatreonData(tabId) {
     }, 2500);
 
     contentData = contentData[tabId];
-    console.log('Patreon Downloader | Raw post data', contentData);
-
-    if (!contentData?.post?.data?.attributes) {
+    console.log('STLBundle Preview maker | Raw post data', contentData);
+    if (!contentData?.post?.data) {
       console.error('Patreon Downloader | Invalid post data found.');
       return;
     }
+    postData = contentData.post
+    let name = contentData.name
+    console.log('name', name)
+    $("#creator-name").val(name)
+    return contentData.post
 
     let text = contentData.post.data.attributes.title;
 
@@ -227,9 +235,38 @@ function slugify(text) {
     .replace(/^-+/, '')              // Trim - from start of text
     .replace(/-+$/, '');             // Trim - from end of text
 }
-
+const sendPostData = async () => {
+  console.log('Sending post')
+  $("#loading").show()
+ //todo make month dynamic
+  let reqBody = {post: postData, creatorName: $("#creator-name").val(), month: 6}
+  console.log('reqbody',reqBody)
+  let url = 'http://localhost:6543/scraper/patreon/post/data'
+  const response = await fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(reqBody) // body data type must match "Content-Type" header
+  });
+  console.log('response',response.json)
+  $("#loading").hide()
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+$('#download').submit(e => {
+  e.preventDefault()
+console.log('submit pressed')
+ sendPostData()
+})
 (function () {
   try {
+
     isPatreonPostSite();
   } catch (e) {
     console.error('Patreon Downloader |', e);

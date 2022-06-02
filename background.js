@@ -69,21 +69,21 @@ class ChromeDownloader {
           chrome.downloads.download(request, resolve);
         }).then(downloadId => {
           if (chrome.runtime.lastError) {
-            console.error('Patreon Downloader |', request.filename, downloadId, chrome.runtime.lastError.message);
+            console.error('STL Bundle Preview Maker |', request.filename, downloadId, chrome.runtime.lastError.message);
           } else {
-            console.debug('Patreon Downloader |', `Download started: ${request.filename}`, downloadId);
+            console.debug('STL Bundle Preview Maker |', `Download started: ${request.filename}`, downloadId);
           }
           this.onDownloadComplete(downloadId)
             .then(success => {
               if (success) {
-                console.debug('Patreon Downloader |', `Download finished: ${request.filename}`, downloadId);
+                console.debug('STL Bundle Preview Maker |', `Download finished: ${request.filename}`, downloadId);
               } else {
-                console.debug('Patreon Downloader |', `Download failed: ${request.filename}`, downloadId);
+                console.debug('STL Bundle Preview Maker |', `Download failed: ${request.filename}`, downloadId);
               }
               resolve(success);
             })
             .catch(err => {
-              console.debug('Patreon Downloader |', `Download failed: ${request.filename}`, downloadId);
+              console.debug('STL Bundle Preview Maker |', `Download failed: ${request.filename}`, downloadId);
               reject(err);
             })
             .finally(() => {
